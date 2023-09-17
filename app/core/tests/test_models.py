@@ -34,8 +34,8 @@ class ModelTests(TestCase):
         ]
 
         for email, expected in sample_emails:
-             user = create_user(email=email, password='pass123')
-             self.assertEqual(user.email, expected)
+            user = create_user(email=email, password='pass123')
+            self.assertEqual(user.email, expected)
 
     def test_new_user_without_email_raises_an_error(self):
         with self.assertRaises(ValueError):
@@ -70,10 +70,10 @@ class ModelTests(TestCase):
         self.assertEqual(str(ingredient), ingredient.name)
 
     @patch('core.models.uuid.uuid4')
-    def test_recipe_file_name_uuid(self, mokc_uuid):
-         uuid = 'test-uuid'
-         mokc_uuid.return_value = uuid
+    def test_recipe_file_name_uuid(self, mock_uuid):
+        uuid = 'test-uuid'
+        mock_uuid.return_value = uuid
 
-         file_path = recipe_image_file_path(None, 'example.jpg')
+        file_path = recipe_image_file_path(None, 'example.jpg')
 
-         self.assertEqual(file_path, f'uploads/recipe/{uuid}.jpg')
+        self.assertEqual(file_path, f'uploads/recipe/{uuid}.jpg')

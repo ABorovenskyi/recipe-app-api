@@ -11,11 +11,14 @@ from recipe.serializers import IngredientSerializer
 
 INGRIDIENT_URL = reverse('recipe:ingredient-list')
 
+
 def detail_url(id):
     return reverse('recipe:ingredient-detail', args=(id,))
 
+
 def create_user(email='user@exmaple.com', password='pasdfgqeg'):
     return get_user_model().objects.create_user(email=email, password=password)
+
 
 def create_ingredient(user, name):
     return Ingredient.objects.create(user=user, name=name)

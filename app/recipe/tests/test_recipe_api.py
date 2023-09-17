@@ -1,4 +1,5 @@
-import tempfile, os
+import os
+import tempfile
 
 from decimal import Decimal
 
@@ -21,8 +22,10 @@ RECIPE_URL = reverse('recipe:recipe-list')
 def detail_url(recipe_id):
     return reverse('recipe:recipe-detail', args=(recipe_id,))
 
+
 def image_upload_url(id):
     return reverse('recipe:recipe-upload-image', args=(id,))
+
 
 def create_recipe(user, **params):
     defaults = {
@@ -36,6 +39,7 @@ def create_recipe(user, **params):
     defaults.update(params)
 
     return Recipe.objects.create(user=user, **defaults)
+
 
 def create_user(**params):
     return get_user_model().objects.create_user(**params)
@@ -106,7 +110,7 @@ class PrivateRecipeAPITest(TestCase):
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_recipe(self):
-        payload = {'title': 'recipe title', 'time_in_minutes': 30, 'price':Decimal('5.99')}
+        payload = {'title': 'recipe title', 'time_in_minutes': 30, 'price': Decimal('5.99')}
         res = self.client.post(RECIPE_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
@@ -135,7 +139,7 @@ class PrivateRecipeAPITest(TestCase):
     def test_full_update(self):
         recipe = create_recipe(self.user)
 
-        payload = {'title':'NEW', 'link': 'http://new.new', 'price': Decimal('1.0'), 'time_in_minutes': 300}
+        payload = {'title': 'NEW', 'link': 'http://new.new', 'price': Decimal('1.0'), 'time_in_minutes': 300}
 
         res = self.client.put(detail_url(recipe.id), payload)
 
@@ -150,7 +154,7 @@ class PrivateRecipeAPITest(TestCase):
         user2 = create_user(email='user2@example.com', password='1sfrgunu49nin')
         recipe = create_recipe(self.user)
 
-        res = self.client.patch(detail_url(recipe.id), {'user': user2})
+        self.client.patch(detail_url(recipe.id), {'user': user2})
         recipe.refresh_from_db()
 
         self.assertEqual(recipe.user, self.user)
@@ -174,7 +178,7 @@ class PrivateRecipeAPITest(TestCase):
         self.assertTrue(Recipe.objects.filter(id=recipe.id).exists())
 
     def test_create_recipe_with_new_tags(self):
-        payload = {'title': 'recipe title', 'time_in_minutes': 30, 'price':Decimal('5.99'), 'tags': [{'name': 'tag1'}, {'name': 'tag2'}]}
+        payload = {'title': 'recipe title', 'time_in_minutes': 30, 'price': Decimal('5.99'), 'tags': [{'name': 'tag1'}, {'name': 'tag2'}]}
         res = self.client.post(RECIPE_URL, payload, format='json')
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
@@ -188,7 +192,7 @@ class PrivateRecipeAPITest(TestCase):
 
     def test_create_recipe_with_existing_tags(self):
         tag = Tag.objects.create(name='tag123', user=self.user)
-        payload = {'title': 'recipe title', 'time_in_minutes': 30, 'price':Decimal('5.99'), 'tags': [{'name': tag.name}, {'name': 'tag222'}]}
+        payload = {'title': 'recipe title', 'time_in_minutes': 30, 'price': Decimal('5.99'), 'tags': [{'name': tag.name}, {'name': 'tag222'}]}
         res = self.client.post(RECIPE_URL, payload, format='json')
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
@@ -239,7 +243,7 @@ class PrivateRecipeAPITest(TestCase):
         self.assertEqual(recipe.tags.count(), 0)
 
     def test_create_recipe_with_new_ingredients(self):
-        payload = {'title': 'recipe title', 'time_in_minutes': 30, 'price':Decimal('5.99'), 'ingredients': [{'name': 'ing1'}, {'name': 'ing2'}]}
+        payload = {'title': 'recipe title', 'time_in_minutes': 30, 'price': Decimal('5.99'), 'ingredients': [{'name': 'ing1'}, {'name': 'ing2'}]}
 
         res = self.client.post(RECIPE_URL, payload, format='json')
 
@@ -256,7 +260,7 @@ class PrivateRecipeAPITest(TestCase):
 
     def test_create_recipe_with_existing_ingredients(self):
         ing = Ingredient.objects.create(user=self.user, name='ingr123')
-        payload = {'title': 'recipe title', 'time_in_minutes': 30, 'price':Decimal('5.99'), 'ingredients': [{'name': 'ing1'}, {'name': ing.name}]}
+        payload = {'title': 'recipe title', 'time_in_minutes': 30, 'price': Decimal('5.99'), 'ingredients': [{'name': 'ing1'}, {'name': ing.name}]}
 
         res = self.client.post(RECIPE_URL, payload, format='json')
 

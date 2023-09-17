@@ -14,8 +14,10 @@ TAGS_URL = reverse('recipe:tag-list')
 def detail_url(tag_id):
     return reverse('recipe:tag-detail', args=(tag_id,))
 
+
 def create_user(email='user@example.com', password='qwerty'):
     return get_user_model().objects.create_user(email=email, password=password)
+
 
 def create_tag(user, name):
     return Tag.objects.create(user=user, name=name)
